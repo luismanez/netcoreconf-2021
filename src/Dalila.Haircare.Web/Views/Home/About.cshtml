@@ -1,6 +1,11 @@
-﻿@{
+﻿@using Dalila.Haircare.Web.Common
+@addTagHelper *, Microsoft.FeatureManagement.AspNetCore
+@{
     ViewData["Title"] = "About";
 }
 <h1>@ViewData["Title"]</h1>
 
 <p>About page.</p>
+<feature name="@Constants.Features.ContactPage">
+    This is a new feature in the About page.
+</feature>

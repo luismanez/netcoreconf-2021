@@ -8,7 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dalila.Haircare.Web.FeatureManagement;
 using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.FeatureFilters;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 
 namespace Dalila.Haircare.Web
 {
@@ -24,9 +28,17 @@ namespace Dalila.Haircare.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddFeatureManagement();
+            services.AddMicrosoftIdentityWebAppAuthentication(Configuration)
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddInMemoryTokenCaches()
+                .AddMicrosoftGraph();
 
-            services.AddControllersWithViews();
+            services.AddFeatureManagement()
+                .AddFeatureFilter<TimeWindowFilter>()
+                .UseDisabledFeaturesHandler(new FriendlyDisabledFeatureHandler()); ;
+
+            services.AddControllersWithViews()
+                .AddMicrosoftIdentityUI();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +59,7 @@ namespace Dalila.Haircare.Web
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
