@@ -34,6 +34,8 @@ namespace Dalila.Haircare.Web
                 .AddInMemoryTokenCaches()
                 .AddMicrosoftGraph();
 
+            services.AddAzureAppConfiguration();
+
             services.AddFeatureManagement()
                 .AddFeatureFilter<TimeWindowFilter>()
                 .AddFeatureFilter<DepartmentFilter>()
@@ -60,6 +62,8 @@ namespace Dalila.Haircare.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAzureAppConfiguration();
 
             app.UseAuthentication();
             app.UseAuthorization();

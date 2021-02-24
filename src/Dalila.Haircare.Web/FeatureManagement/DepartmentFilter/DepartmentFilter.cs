@@ -24,22 +24,28 @@ namespace Dalila.Haircare.Web.FeatureManagement.DepartmentFilter
             // so here we are creating a Scope to be able to retrieve the GraphServiceClient and call Graph API.
             // Pattern taken from here: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/hosted-services?view=aspnetcore-5.0&tabs=visual-studio#consuming-a-scoped-service-in-a-background-task
             // However, for Production systems, I suggest you to extend Claims with the Department, and here use the IHttpContextAccessor
-            using var scope = _serviceProvider.CreateScope();
-            
-            var graphServiceClient =
-                scope.ServiceProvider
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+
+                var graphServiceClient = scope.ServiceProvider
                     .GetRequiredService<GraphServiceClient>();
 
-            var me = await graphServiceClient.Me
-                .Request()
-                .Select(user => user.Department)
-                .GetAsync();
+                var me = await graphServiceClient.Me
+                    .Request()
+                    .Select(user => user.Department)
+                    .GetAsync();
 
-            var meDepartment = me.Department;
+                var meDepartment = me.Department;
 
-            var settings = context.Parameters.Get<DepartmentFilterSettings>() ?? new DepartmentFilterSettings();
+                var settings = context.Parameters.Get<DepartmentFilterSettings>() ?? new DepartmentFilterSettings();
 
-            return settings.AllowedDepartments.Contains(meDepartment, StringComparer.OrdinalIgnoreCase);
+                return settings.AllowedDepartments.Contains(meDepartment, StringComparer.OrdinalIgnoreCase);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

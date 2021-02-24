@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dalila.Haircare.Web
 {
@@ -20,7 +16,20 @@ namespace Dalila.Haircare.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .ConfigureAppConfiguration(config =>
+                        {
+                            var settings = config.Build();
+                            var connection = settings.GetConnectionString("AppConfig");
+
+                            config.AddAzureAppConfiguration(options =>
+                            {
+                                options.Connect(connection);
+                                options.Select(KeyFilter.Any);
+                                options.UseFeatureFlags();
+                            });
+                        })
+                        .UseStartup<Startup>();
                 });
     }
 }
