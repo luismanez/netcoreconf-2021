@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dalila.Haircare.Web.FeatureManagement;
+using Dalila.Haircare.Web.FeatureManagement.DepartmentFilter;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.FeatureFilters;
 using Microsoft.Identity.Web;
@@ -35,7 +36,8 @@ namespace Dalila.Haircare.Web
 
             services.AddFeatureManagement()
                 .AddFeatureFilter<TimeWindowFilter>()
-                .UseDisabledFeaturesHandler(new FriendlyDisabledFeatureHandler()); ;
+                .AddFeatureFilter<DepartmentFilter>()
+                .UseDisabledFeaturesHandler(new FriendlyDisabledFeatureHandler());
 
             services.AddControllersWithViews()
                 .AddMicrosoftIdentityUI();

@@ -35,6 +35,7 @@ namespace Dalila.Haircare.Web.Controllers
             return View();
         }
 
+        [FeatureGate(Constants.Features.ServicesPage)]
         public IActionResult Services()
         {
             return View();
